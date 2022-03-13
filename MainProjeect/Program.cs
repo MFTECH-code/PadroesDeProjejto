@@ -1,6 +1,8 @@
-﻿using MainProjeect.Entities;
+﻿using MainProjeect.ChainOfResponsability;
+using MainProjeect.Entities;
 using MainProjeect.Strategy;
 using System;
+using System.Collections.Generic;
 
 namespace MainProjeect
 {
@@ -8,42 +10,37 @@ namespace MainProjeect
     {
         static void Main(string[] args)
         {
-            var produto1 = new Produto 
+            var produtos = new List<Produto>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                produtos.Add(new Produto { 
+                    Id = i,
+                    Nome = "Produto gerado",
+                    Tipo = TipoDeProduto.Eletronico,
+                    Valor = 5m
+                });
+            }
+
+            var valorTotal = 0m;
+            foreach (var produto in produtos)
+            {
+                valorTotal += produto.Valor;
+            }
+
+            var pedido = new Pedido
             {
                 Id = 1,
-                Nome = "Notebook",
-                Valor = 1900m,
-                Tipo = TipoDeProduto.Eletronico
+                Items = produtos,
+                Status = StatusPedido.Procesamento,
+                ValorTotal = valorTotal
             };
 
-            var produto2 = new Produto
-            {
-                Id = 2,
-                Nome = "Batata",
-                Valor = 5m,
-                Tipo = TipoDeProduto.Alimenticio
-            };
+            // Aplicando desconto por valor
+            var desconto = new DescontoPorValor();
+            var descontoAplicado = desconto.Calcular(pedido);
 
-            // Calculando imposto do notebook
-
-            // Selecionamos o tipo de imposto que queremos utilizar
-            IImpostoStrategy estrategiaDeImposto = new ImpostoEletronicosStrategy();
-
-            // Calculamos o imposto
-            var imposto = estrategiaDeImposto.CalcularImposto(produto1);
-
-            Console.WriteLine(imposto);
-
-            // Calculando imposto da batata
-
-            // Podemos trocar de estratégia quando quisermos
-            estrategiaDeImposto = new ImpostoAlimenticiosStrategy();
-
-            imposto = estrategiaDeImposto.CalcularImposto(produto2);
-
-            Console.WriteLine(imposto);
-
-            // Se quisermos podemos criar uma validação depenendo do tipo de produto
+            Console.WriteLine(descontoAplicado);
         }
     }
 }

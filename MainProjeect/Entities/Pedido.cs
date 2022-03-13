@@ -9,7 +9,7 @@ namespace MainProjeect.Entities
     public class Pedido
     {
         public int Id { get; set; }
-        public IList<Pedido> Items { get; set; }
+        public IList<Produto> Items { get; set; }
         public decimal ValorTotal { get; set; }
         public StatusPedido Status { get; set; }
     }
